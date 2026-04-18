@@ -1,11 +1,12 @@
 import { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Plus, WifiOff, RefreshCw } from 'lucide-react';
+import { Search, Plus, WifiOff, RefreshCw, LogOut } from 'lucide-react';
 import AppSidebar from './AppSidebar';
 import GuestInputModal from './GuestInputModal';
 import { useGuests } from '@/lib/useStore';
 import { store } from '@/lib/store';
 import WeddingBoardLogo from './WeddingBoardLogo';
+import { supabase } from '@/lib/supabase';
 
 const tabs = [
   { label: '대시보드', path: '/' },
@@ -22,9 +23,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [showResults, setShowResults] = useState(false);
   const { online, pendingSync } = useGuests();
 
+  async function handleLogout() {
+    await supabase.auth.signOut();
+  }
+
   const searchResults = searchQuery.trim().length >= 1 ? store.search(searchQuery) : [];
 
-  // 검색 결과 클릭 → 하객 명부로 이동하며 해당 이름 검색 상태 전달
   function handleSelectGuest(name: string) {
     setSearchQuery('');
     setShowResults(false);
@@ -36,7 +40,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <AppSidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* 오프라인 배너 */}
         {!online && (
           <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2">
             <WifiOff className="w-3.5 h-3.5 text-amber-500 shrink-0" />
@@ -50,13 +53,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         )}
 
-        {/* Header */}
         <header className="flex items-center justify-between px-4 lg:px-8 py-3 bg-white border-b border-gray-100 sticky top-0 z-30">
           <div className="flex items-center gap-3 pl-10 lg:pl-0">
             <WeddingBoardLogo />
             <div className="w-px h-4 bg-border mx-1 hidden md:block" />
-
-            {/* 전역 검색 */}
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <input
@@ -68,7 +68,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 onBlur={() => setTimeout(() => setShowResults(false), 150)}
                 className="pl-9 pr-4 py-2 rounded-lg bg-[#F5F6F8] text-xs text-foreground placeholder:text-muted-foreground w-44 lg:w-52 outline-none focus:ring-2 focus:ring-primary/20 border border-transparent focus:border-primary/20"
               />
-              {/* 검색 드롭다운 */}
               {showResults && searchQuery.trim().length >= 1 && (
                 <div className="absolute top-full left-0 mt-1.5 w-72 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
                   {searchResults.length === 0 ? (
@@ -118,6 +117,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </Link>
               );
             })}
+            <button
+              onClick={handleLogout}
+              title="로그아웃"
+              className="p-2 rounded-lg text-muted-foreground hover:bg-red-50 hover:text-destructive transition-colors ml-1">
+              <LogOut className="w-4 h-4" />
+            </button>
           </nav>
         </header>
 
@@ -126,7 +131,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      {/* FAB — "하객 접수" */}
       <button onClick={() => setShowModal(true)}
         className="fixed bottom-6 right-6 flex items-center gap-2 px-4 lg:px-5 py-2.5 lg:py-3 rounded-full bg-primary text-white text-xs lg:text-sm font-semibold shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all z-50">
         <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />

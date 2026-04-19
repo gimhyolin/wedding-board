@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import WeddingBoardLogo from '@/components/WeddingBoardLogo';
-import { LayoutDashboard, Users, BarChart2, MessageCircleHeart, Settings, RefreshCw, Plus } from 'lucide-react';
+import { LayoutDashboard, Users, BarChart2, MessageCircleHeart, Settings, RefreshCw, Plus, Search, Wallet, Ticket, Gift, LogOut } from 'lucide-react';
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -10,7 +10,7 @@ export default function AuthPage() {
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowLogin(true), 1500);
+    const timer = setTimeout(() => setShowLogin(true), 800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -27,8 +27,6 @@ export default function AuthPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#F0F2F5]">
-
-      {/* 실제 대시보드 UI 재현 */}
       <div className="flex h-screen select-none pointer-events-none">
 
         {/* 사이드바 */}
@@ -64,25 +62,30 @@ export default function AuthPage() {
           </div>
         </aside>
 
-        {/* 메인 콘텐츠 */}
+        {/* 메인 */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* 헤더 */}
           <header className="flex items-center justify-between px-4 lg:px-8 py-3 bg-white border-b border-gray-100">
             <div className="flex items-center gap-3">
               <WeddingBoardLogo />
               <div className="w-px h-4 bg-border mx-1" />
-              <div className="pl-9 pr-4 py-2 rounded-lg bg-[#F5F6F8] text-xs text-muted-foreground w-52">하객 검색...</div>
+              <div className="flex items-center gap-2 pl-3 pr-4 py-2 rounded-lg bg-[#F5F6F8] w-52">
+                <Search className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">하객 검색...</span>
+              </div>
             </div>
             <div className="flex items-center gap-0.5">
               {['대시보드', '하객 명부', '정산 관리', 'Thank You ✨'].map((t, i) => (
                 <div key={t} className={`px-3 py-2 text-xs rounded-lg ${i === 0 ? 'bg-[#EBF3FE] text-primary font-semibold' : 'text-muted-foreground'}`}>{t}</div>
               ))}
+              <div className="p-2 rounded-lg text-muted-foreground ml-1">
+                <LogOut className="w-4 h-4" />
+              </div>
             </div>
           </header>
 
           {/* 대시보드 본문 */}
           <main className="flex-1 px-4 lg:px-8 py-4 lg:py-6 space-y-4 overflow-hidden">
-            {/* 타이틀 */}
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-lg font-bold text-foreground">접수 현황 대시보드</h1>
@@ -101,13 +104,15 @@ export default function AuthPage() {
             {/* 통계 카드 3개 */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { label: '총합 누적 축의금', value: '₩0', sub: '신랑 ₩0 · 신부 ₩0', iconBg: 'bg-emerald-50', badge: '수입' },
-                { label: '전체 하객 수', value: '0명', sub: '신랑측 0명 · 신부측 0명', iconBg: 'bg-[#EBF3FE]', badge: '전체' },
-                { label: '전체 식권 수', value: '0매', sub: '신랑측 · 신부측 합계', iconBg: 'bg-[#FEE9F0]', badge: '식권' },
+                { label: '총합 누적 축의금', value: '₩0', sub: '신랑 ₩0 · 신부 ₩0', icon: Wallet, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-500', badge: '수입' },
+                { label: '전체 하객 수', value: '0명', sub: '신랑측 0명 · 신부측 0명', icon: Users, iconBg: 'bg-[#EBF3FE]', iconColor: 'text-primary', badge: '전체' },
+                { label: '전체 식권 수', value: '0매', sub: '신랑측 · 신부측 합계', icon: Ticket, iconBg: 'bg-[#FEE9F0]', iconColor: 'text-[#DC97AC]', badge: '식권' },
               ].map((card, i) => (
                 <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                   <div className="flex items-center justify-between mb-3">
-                    <div className={`w-9 h-9 rounded-xl ${card.iconBg}`} />
+                    <div className={`w-9 h-9 rounded-xl ${card.iconBg} flex items-center justify-center`}>
+                      <card.icon className={`w-4 h-4 ${card.iconColor}`} />
+                    </div>
                     <span className="text-[10px] px-2 py-0.5 rounded-md bg-gray-50 text-muted-foreground">{card.badge}</span>
                   </div>
                   <p className="text-2xl font-bold text-foreground">{card.value}</p>
@@ -129,10 +134,14 @@ export default function AuthPage() {
                       <span className="text-sm font-bold">₩0</span>
                     </div>
                     <div className="flex divide-x divide-gray-100">
-                      {['하객 수', '식권', '답례품'].map((label, i) => (
-                        <div key={label} className="flex-1 text-center">
+                      {[
+                        { label: '하객 수', value: '0명', icon: Users },
+                        { label: '식권', value: '0매', icon: Ticket },
+                        { label: '답례품', value: '0개', icon: Gift },
+                      ].map(({ label, value, icon: Icon }, i) => (
+                        <div key={label} className="flex-1 text-center py-1">
                           <p className="text-[10px] text-muted-foreground">{label}</p>
-                          <p className={`text-sm font-bold ${i === 1 ? color : 'text-foreground'}`}>{i === 1 ? '0매' : i === 2 ? '0개' : '0명'}</p>
+                          <p className={`text-sm font-bold ${i === 1 ? color : 'text-foreground'}`}>{value}</p>
                         </div>
                       ))}
                     </div>
@@ -152,24 +161,25 @@ export default function AuthPage() {
         </div>
       </div>
 
-      {/* FAB 미리보기 */}
-      <div className="fixed bottom-6 right-6 flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-white text-sm font-semibold shadow-lg pointer-events-none">
+      {/* FAB */}
+      <div className="fixed bottom-6 right-6 flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-white text-sm font-semibold shadow-lg pointer-events-none z-0">
         <Plus className="w-4 h-4" />하객 접수
       </div>
 
-      {/* 로그인 오버레이 — 1.5초 후 */}
+      {/* 로그인 오버레이 — 0.8초 후 */}
       <AnimatePresence>
         {showLogin && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
               className="absolute inset-0 bg-white/60 backdrop-blur-[3px] z-10"
             />
             <motion.div
-              initial={{ opacity: 0, y: 60 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220, delay: 0.1 }}
               className="absolute inset-0 z-20 flex items-center justify-center px-4"
             >
               <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl p-8 w-full max-w-xs">

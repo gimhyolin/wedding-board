@@ -19,50 +19,96 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-[#F0F2F5]">
 
-      {/* 배경 대시보드 미리보기 (블러 + 투명도) */}
-      <div className="absolute inset-0 z-0">
-        <div className="w-full h-full bg-[#F0F2F5]">
-          {/* 대시보드 미리보기 레이아웃 */}
-          <div className="flex h-full opacity-30">
-            {/* 사이드바 */}
-            <div className="w-48 bg-white border-r border-gray-100 p-4 flex flex-col gap-3">
-              <div className="h-6 w-28 bg-gray-200 rounded-lg mt-2" />
-              <div className="mt-4 flex flex-col gap-2">
-                {[80, 64, 72, 60].map((w, i) => (
-                  <div key={i} className="h-8 rounded-xl bg-gray-100" style={{ width: `${w}%` }} />
-                ))}
+      {/* 배경 대시보드 미리보기 */}
+      <div className="absolute inset-0 z-0 flex">
+        {/* 사이드바 */}
+        <div className="w-52 bg-white border-r border-gray-200 p-5 flex flex-col gap-3 shrink-0">
+          <div className="h-5 w-32 bg-gray-800 rounded-md" />
+          <div className="h-3 w-20 bg-gray-300 rounded-md mt-1" />
+          <div className="mt-3 flex flex-col gap-1.5">
+            {['현황 대시보드', '하객 명부', '정산 관리', 'Thank You'].map((label, i) => (
+              <div key={i} className={`h-8 rounded-xl flex items-center px-3 gap-2 ${i === 0 ? 'bg-blue-50' : ''}`}>
+                <div className={`w-3 h-3 rounded-sm ${i === 0 ? 'bg-blue-400' : 'bg-gray-300'}`} />
+                <div className={`h-2.5 rounded-sm ${i === 0 ? 'bg-blue-400 w-20' : 'bg-gray-200'}`} style={{ width: `${[80,60,64,56][i]}px` }} />
               </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 메인 콘텐츠 */}
+        <div className="flex-1 flex flex-col">
+          {/* 헤더 */}
+          <div className="h-14 bg-white border-b border-gray-200 flex items-center px-6 gap-3">
+            <div className="h-4 w-24 bg-gray-800 rounded-md" />
+            <div className="w-px h-4 bg-gray-200" />
+            <div className="h-8 w-44 bg-gray-100 rounded-lg" />
+            <div className="ml-auto flex gap-2">
+              {['대시보드','하객 명부','정산 관리'].map((t, i) => (
+                <div key={i} className={`h-7 rounded-lg px-3 flex items-center`}>
+                  <div className={`h-2.5 rounded-sm ${i === 0 ? 'bg-blue-400 w-16' : 'bg-gray-300 w-14'}`} />
+                </div>
+              ))}
             </div>
-            {/* 메인 */}
-            <div className="flex-1 p-6 flex flex-col gap-4">
-              {/* 헤더 */}
-              <div className="h-12 bg-white rounded-2xl border border-gray-100" />
-              {/* 통계 카드 */}
-              <div className="grid grid-cols-3 gap-3">
-                {['bg-blue-50', 'bg-pink-50', 'bg-emerald-50'].map((c, i) => (
-                  <div key={i} className={`h-24 ${c} rounded-2xl border border-gray-100`} />
-                ))}
-              </div>
-              {/* 테이블 */}
-              <div className="flex-1 bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-2">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-8 bg-gray-50 rounded-xl" />
-                ))}
-              </div>
+          </div>
+
+          {/* 대시보드 콘텐츠 */}
+          <div className="flex-1 p-6 flex flex-col gap-4">
+            {/* 통계 카드 3개 */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { bg: 'bg-white', accent: 'bg-emerald-400', w: 'w-24', label: '총 축의금', value: '₩12,400,000' },
+                { bg: 'bg-white', accent: 'bg-blue-400', w: 'w-20', label: '전체 하객', value: '124명' },
+                { bg: 'bg-white', accent: 'bg-pink-400', w: 'w-16', label: '전체 식권', value: '118매' },
+              ].map((card, i) => (
+                <div key={i} className={`${card.bg} rounded-2xl border border-gray-100 p-4`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`w-8 h-8 rounded-xl ${i === 0 ? 'bg-emerald-50' : i === 1 ? 'bg-blue-50' : 'bg-pink-50'} flex items-center justify-center`}>
+                      <div className={`w-4 h-4 rounded-sm ${card.accent}`} />
+                    </div>
+                    <div className="h-4 w-12 bg-gray-100 rounded-lg" />
+                  </div>
+                  <div className="h-6 w-28 bg-gray-800 rounded-md mb-1" />
+                  <div className="h-3 w-20 bg-gray-200 rounded-md" />
+                </div>
+              ))}
+            </div>
+
+            {/* 신랑/신부 현황 */}
+            <div className="grid grid-cols-2 gap-3">
+              {['신랑측 현황', '신부측 현황'].map((title, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`h-5 w-16 rounded-md ${i === 0 ? 'bg-blue-100' : 'bg-pink-100'}`} />
+                    <div className="h-5 w-20 bg-gray-200 rounded-md" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {[...Array(3)].map((_, j) => (
+                      <div key={j} className="flex items-center justify-between py-2 border-b border-gray-50">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-6 h-6 rounded-full ${i === 0 ? 'bg-blue-100' : 'bg-pink-100'}`} />
+                          <div className="h-3 w-16 bg-gray-200 rounded-md" />
+                        </div>
+                        <div className="h-3 w-16 bg-gray-300 rounded-md" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        {/* 블러 오버레이 */}
-        <div className="absolute inset-0 backdrop-blur-sm bg-white/40" />
       </div>
+
+      {/* 블러 오버레이 */}
+      <div className="absolute inset-0 z-10 backdrop-blur-[2px] bg-white/50" />
 
       {/* 로그인 카드 */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-xs"
+        className="relative z-20 w-full max-w-xs"
       >
         <div className="bg-white/90 backdrop-blur-md rounded-3xl border border-white shadow-2xl p-8">
           <div className="text-center mb-7">

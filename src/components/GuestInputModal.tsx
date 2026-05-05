@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, UserPlus, AlertTriangle, Check } from 'lucide-react';
 import { store, formatEnvelope, PRESET_GROUPS } from '@/lib/store';
-import type { Guest } from '@/lib/store';
+import type { Guest, PreGuest } from '@/lib/store';
 
 interface Props {
   open: boolean;
@@ -38,6 +38,8 @@ function defaultForm(guest?: Guest | null): FormState {
 export default function GuestInputModal({ open, onClose, editGuest }: Props) {
   const isEdit = !!editGuest;
   const [form, setForm] = useState<FormState>(() => defaultForm(editGuest));
+  const [preResults, setPreResults] = useState<PreGuest[]>([]);
+  const [showPreDropdown, setShowPreDropdown] = useState(false);
   const [dupWarning, setDupWarning] = useState<string | null>(null);
   const [dupConfirmed, setDupConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -172,8 +174,42 @@ export default function GuestInputModal({ open, onClose, editGuest }: Props) {
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
                   <label className="block text-[10px] font-semibold text-muted-foreground mb-1">이름 *</label>
-                  <input required value={form.name} onChange={e => set('name', e.target.value)}
-                    placeholder="홍길동" className={inputCls} />
+                  <div className="relative">
+                    <input required value={form.name}
+                      onChange={e => {
+                        set('name', e.target.value);
+                        if (!isEdit) {
+                          const results = store.searchPreGuests(e.target.value);
+                          setPreResults(results);
+                          setShowPreDropdown(results.length > 0 && e.target.value.trim().length > 0);
+                        }
+                      }}
+                      onBlur={() => setTimeout(() => setShowPreDropdown(false), 150)}
+                      placeholder="홍길동" className={inputCls} />
+                    {showPreDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl border border-gray-100 shadow-xl z-50 max-h-40 overflow-y-auto">
+                        {preResults.map(pg => (
+                          <button key={pg.id} type="button"
+                            onMouseDown={() => {
+                              set('name', pg.name);
+                              set('side', pg.side);
+                              set('group', PRESET_GROUPS.includes(pg.group) ? pg.group : '기타');
+                              if (!PRESET_GROUPS.includes(pg.group)) set('groupCustom', pg.group);
+                              setShowPreDropdown(false);
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#F8F9FB] transition-colors text-left">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${pg.side === 'groom' ? 'bg-[#EBF3FE] text-primary' : 'bg-[#FEE9F0] text-[#DC97AC]'}`}>
+                              {pg.name.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold text-foreground">{pg.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{pg.group} · {pg.side === 'groom' ? '신랑측' : '신부측'}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-semibold text-muted-foreground mb-1">전화번호</label>

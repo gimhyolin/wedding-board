@@ -47,3 +47,11 @@ export function useEventConfig() {
   }, []);
   return data;
 }
+
+export function usePreGuests() {
+  const [preGuests, setPreGuests] = useState(() => store.getPreGuests());
+  useEffect(() => {
+    return store.subscribe(() => setPreGuests(store.getPreGuests()));
+  }, []);
+  return { preGuests };
+}

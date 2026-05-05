@@ -13,6 +13,7 @@ const tabs = [
   { label: '하객 명부', path: '/guests' },
   { label: '정산 관리', path: '/settlement' },
   { label: 'Thank You ✨', path: '/thankyou' },
+  { label: '사전 등록', path: '/preguests' },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {

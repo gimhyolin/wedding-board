@@ -12,6 +12,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import GuestListPage from "@/pages/GuestListPage";
 import SettlementPage from "@/pages/SettlementPage";
 import ThankYouPage from "@/pages/ThankYouPage";
+import PreGuestPage from "@/pages/PreGuestPage";
 import AuthPage from "@/pages/AuthPage";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -75,6 +76,7 @@ function AppContent() {
         <Route path="/guests" element={<DashboardLayout><GuestListPage /></DashboardLayout>} />
         <Route path="/settlement" element={<DashboardLayout><SettlementPage /></DashboardLayout>} />
         <Route path="/thankyou" element={<DashboardLayout><ThankYouPage /></DashboardLayout>} />
+        <Route path="/preguests" element={<DashboardLayout><PreGuestPage /></DashboardLayout>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

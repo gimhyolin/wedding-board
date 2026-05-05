@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, BarChart2, MessageCircleHeart, ChevronDown, ChevronUp, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, BarChart2, MessageCircleHeart, ClipboardList, Menu, X } from 'lucide-react';
 import WeddingBoardLogo from './WeddingBoardLogo';
 
 const navSections = [
@@ -8,6 +8,7 @@ const navSections = [
   { label: '하객 명부',     icon: Users,            path: '/guests' },
   { label: '정산 관리',     icon: BarChart2,         path: '/settlement' },
   { label: 'Thank You',    icon: MessageCircleHeart, path: '/thankyou' },
+  { label: '사전 하객 등록',  icon: ClipboardList,      path: '/preguests' },
 ];
 
 export default function AppSidebar() {
